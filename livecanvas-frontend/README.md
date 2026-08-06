@@ -1,70 +1,142 @@
-# Getting Started with Create React App
+# LiveCanvas
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A real-time collaborative content management platform where teams can co-author web pages together — live, in the same tab-switch-free session — with AI-assisted content generation built in.
 
-## Available Scripts
+Think Notion's block editor + Google Docs' live collaboration + an AI writing assistant, built from scratch on the MERN stack.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## ✨ Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Block-based page editor** — build pages from heading, text, image, and AI-generated blocks
+- **Real-time multi-user collaboration** — edits sync live across sessions via WebSockets, no refresh needed
+- **Drag-and-drop block reordering** — powered by `@dnd-kit`, with server-persisted order
+- **AI content generation** — generate on-brand copy inline using Groq's LLaMA 3.1, directly inside the editor
+- **Live multiplatform preview** — see how a page renders on mobile, tablet, and desktop simultaneously, before publishing
+- **JWT authentication** — secure signup/login with protected routes
+- **Public live rendering** — every page is instantly viewable at a public, shareable URL
+- **Polished, animated UI** — Framer Motion micro-interactions throughout (staggered entrances, animated block reordering, modal transitions)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🛠️ Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Frontend**
+- React.js (Create React App)
+- React Router
+- Framer Motion — animation
+- @dnd-kit — accessible drag-and-drop
+- Socket.IO Client
+- Axios
 
-### `npm run build`
+**Backend**
+- Node.js + Express.js
+- MongoDB + Mongoose
+- Socket.IO — real-time sync engine
+- JWT + bcrypt — authentication
+- Groq SDK (LLaMA 3.1) — AI content generation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Deployment**
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🏗️ Architecture
 
-### `npm run eject`
+```
+livecanvas/
+├── backend/
+│   ├── config/          # DB connection
+│   ├── models/          # User, Page (with embedded Block subdocuments)
+│   ├── routes/          # auth, pages, ai
+│   ├── middleware/      # JWT auth guard
+│   ├── utils/           # permission helpers
+│   └── server.js        # Express + Socket.IO server
+│
+└── frontend/
+    ├── src/
+    │   ├── api/          # axios instance, socket client, auth calls
+    │   ├── components/   # Block, AIModal, PreviewStrip, ProtectedRoute
+    │   ├── pages/         # Login, Signup, Dashboard, Editor, PublicView
+    │   └── utils/         # greeting helper
+    └── public/
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### How real-time sync works
+Each page has its own Socket.IO **room**. When a user edits a block, the change is:
+1. Applied optimistically to local state (instant feedback)
+2. Persisted via REST API to MongoDB
+3. Broadcast to everyone else in that page's room via Socket.IO
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+This keeps the REST API as the single source of truth while Socket.IO handles low-latency propagation — REST for durability, WebSockets for speed.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🚀 Getting Started
 
-## Learn More
+### Prerequisites
+- Node.js v18+
+- A MongoDB Atlas connection string
+- A free Groq API key ([console.groq.com](https://console.groq.com))
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Backend setup
+```bash
+cd backend
+npm install
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Create a `.env` file:
+```
+MONGO_URI=your_mongodb_atlas_connection_string
+JWT_SECRET=your_random_secret_string
+GROQ_API_KEY=your_groq_api_key
+PORT=5000
+```
 
-### Code Splitting
+```bash
+npm run dev
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Frontend setup
+```bash
+cd frontend
+npm install
+npm start
+```
 
-### Analyzing the Bundle Size
+The app runs at `http://localhost:3000`, backend at `http://localhost:5000`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## 🧪 Testing Real-Time Sync Locally
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. Sign up and log in
+2. Create a page and open it in the editor
+3. Open the same page URL in a second browser tab (or incognito window)
+4. Edit a block in one tab — watch it update live in the other
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 📌 Design Decisions
 
-### Deployment
+- **Blocks are embedded subdocuments**, not a separate collection — since blocks are always fetched with their parent page, embedding avoids unnecessary joins/populates.
+- **Optimistic UI updates** — local state updates immediately on edit, then syncs to the server, so typing never feels blocked on network latency.
+- **REST + Socket.IO split** — REST handles persistence and authorization; Socket.IO handles broadcast only. This keeps permission logic in one place (Express middleware) instead of duplicating it in socket handlers.
+- **No CRDT/operational transforms** — simultaneous edits to the exact same block use last-write-wins. A production version would add conflict resolution (e.g. Yjs) for true concurrent text editing.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 🗺️ Possible Future Improvements
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Collaborator invite system (owner/editor roles) for sharing pages with non-owners
+- Version history / undo
+- Real CRDT-based conflict resolution for simultaneous same-block edits
+- Image upload (currently URL-based only)
+
+---
+
+## 📄 License
+
+MIT
