@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../api/axios';
 import socket from '../api/socket';
@@ -16,7 +16,7 @@ import {
 export default function Editor() {
   const { id } = useParams();
   const [page, setPage] = useState(null);
-  const [saving, setSaving] = useState(false);
+  const [, setSaving] = useState(false);
   const [editorNames, setEditorNames] = useState([]);
   const [showAIModal, setShowAIModal] = useState(false);
   const sensors = useSensors(useSensor(PointerSensor));
