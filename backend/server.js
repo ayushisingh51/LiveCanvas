@@ -11,7 +11,7 @@ app.use(cors());
 connectDB();
 
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/pages', require('./routes/pages'));
+app.use('/api/pages', require('./routes/Pages'));
 app.use('/api/ai', require('./routes/ai'));
 
 const server = http.createServer(app);
