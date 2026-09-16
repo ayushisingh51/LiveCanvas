@@ -12,7 +12,13 @@ const pageSchema = new mongoose.Schema({
   title: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  blocks: [blockSchema],
+
+roomId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Room'
+},
+
+blocks: [blockSchema],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Page', pageSchema);
