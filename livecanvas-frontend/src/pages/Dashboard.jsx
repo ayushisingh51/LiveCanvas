@@ -8,7 +8,6 @@ import {
   getMyRooms,
 } from '../api/rooms';
 import socket, {
-  joinRoom as joinSocketRoom,
   onPresenceList,
   onUserOnline,
   onUserOffline,
