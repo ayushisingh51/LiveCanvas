@@ -493,3 +493,77 @@ h1, h2, h3, .brand {
   border: 1px solid var(--border);
   margin-left: 10px;
 }
+
+/* ---------- ROOM PAGE CREATION ---------- */
+
+.pages-section-header {
+  max-width: 1000px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pages-section-header .section-label {
+  margin: 0;
+}
+
+.create-page-button {
+  background: var(--coral);
+  color: #0D1417;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.create-page-form {
+  max-width: 1000px;
+  margin: 0 auto 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.create-page-form input {
+  flex: 1;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+
+.create-page-form input::placeholder {
+  color: var(--text-muted);
+}
+
+.create-page-form input:focus {
+  border-color: var(--mint);
+}
+
+.create-page-form button {
+  background: var(--mint);
+  color: #0D1417;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+
+.create-page-form button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.create-page-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
